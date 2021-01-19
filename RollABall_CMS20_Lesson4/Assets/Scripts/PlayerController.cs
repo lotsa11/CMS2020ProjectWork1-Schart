@@ -12,28 +12,30 @@ using UnityEngine.SceneManagement;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float m_speed = 1f; //speed modifier
-     public Camera TDcam;
+    public Camera TDcam;
     private Rigidbody m_playerRigidbody = null; //reference to the players rigidbody
     public bool onGround;
     public RawImage targetImage;
     private float m_movementX, m_movementY; //input vector components
-public Slider sliderCooldown;
+    public Slider slider;
+      private float lifes;
+    public float maxLifes;
     private int m_collectablesTotalCount, m_collectablesCounter; //everything we need to count the given collectables
 
     private Stopwatch m_stopwatch; //takes the time
-
     public GameObject schuss; //schuss Object
-
     public Text scoreText;
     public GameObject gameOverText;
     
     private void Start()
     {
-         onGround = true;
+        slider.maxValue = maxLifes;
+        lifes = maxLifes;
+        onGround = true;
         m_playerRigidbody = GetComponent<Rigidbody>(); //get the rigidbody component
-
+ 
         m_collectablesTotalCount = m_collectablesCounter = GameObject.FindGameObjectsWithTag("Collectable").Length; //find all gameobjects in the scene which are tagged with "Collectable" and count them via Length property 
-TDcam.targetTexture = (RenderTexture)targetImage.texture;
+        TDcam.targetTexture = (RenderTexture)targetImage.texture;
         scoreText.text = "collectables: " + m_collectablesTotalCount.ToString() + " / " + m_collectablesTotalCount.ToString();
         
         m_stopwatch = Stopwatch.StartNew(); //start the stopwatch
@@ -47,9 +49,10 @@ TDcam.targetTexture = (RenderTexture)targetImage.texture;
         m_movementX = movementVector.x;
         m_movementY = movementVector.y;
     }
+    
    // Update is called once per frame
     void Update()
-    {
+    {slider.value = lifes;
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
 
@@ -123,13 +126,16 @@ TDcam.targetTexture = (RenderTexture)targetImage.texture;
             }
         }
         else if (other.gameObject.CompareTag("Enemy")) //has the other gameobject the tag "Enemy" / game over state
-        {
-            UnityEngine.Debug.Log("Game Over!");
+        {lifes -= 1;
+        if (lifes == 0){
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+           // UnityEngine.Debug.Log("Game Over!");
             //gameOverText.SetActive(true);
             
-#if UNITY_EDITOR
+/*#if UNITY_EDITOR
             UnityEditor.EditorApplication.ExitPlaymode();
-#endif
+#endif*/
         }
     }
 public void OnCollisionEnter(Collision other)
