@@ -12,9 +12,10 @@ using UnityEngine.SceneManagement;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float m_speed = 1f; //speed modifier
-    
+     public Camera TDcam;
     private Rigidbody m_playerRigidbody = null; //reference to the players rigidbody
     public bool onGround;
+    public RawImage targetImage;
     private float m_movementX, m_movementY; //input vector components
 public Slider sliderCooldown;
     private int m_collectablesTotalCount, m_collectablesCounter; //everything we need to count the given collectables
@@ -32,7 +33,7 @@ public Slider sliderCooldown;
         m_playerRigidbody = GetComponent<Rigidbody>(); //get the rigidbody component
 
         m_collectablesTotalCount = m_collectablesCounter = GameObject.FindGameObjectsWithTag("Collectable").Length; //find all gameobjects in the scene which are tagged with "Collectable" and count them via Length property 
-
+TDcam.targetTexture = (RenderTexture)targetImage.texture;
         scoreText.text = "collectables: " + m_collectablesTotalCount.ToString() + " / " + m_collectablesTotalCount.ToString();
         
         m_stopwatch = Stopwatch.StartNew(); //start the stopwatch
@@ -146,4 +147,6 @@ public void OnCollisionEnter(Collision other)
 #endif
     }
     
+    
 }
+
